@@ -56,6 +56,7 @@
             this.lblDeviceInfo = new System.Windows.Forms.Label();
             this.BtnPush = new System.Windows.Forms.Button();
             this.UploadToDevice = new System.Windows.Forms.Button();
+            this.btnDeleteUser = new System.Windows.Forms.Button();
             this.pnlHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.panel1.SuspendLayout();
@@ -344,7 +345,7 @@
             // 
             // BtnPush
             // 
-            this.BtnPush.Location = new System.Drawing.Point(138, 40);
+            this.BtnPush.Location = new System.Drawing.Point(529, 40);
             this.BtnPush.Name = "BtnPush";
             this.BtnPush.Size = new System.Drawing.Size(75, 23);
             this.BtnPush.TabIndex = 893;
@@ -362,11 +363,22 @@
             this.UploadToDevice.UseVisualStyleBackColor = true;
             this.UploadToDevice.Click += new System.EventHandler(this.UploadToDevice_Click);
             // 
+            // btnDeleteUser
+            // 
+            this.btnDeleteUser.Location = new System.Drawing.Point(610, 41);
+            this.btnDeleteUser.Name = "btnDeleteUser";
+            this.btnDeleteUser.Size = new System.Drawing.Size(75, 23);
+            this.btnDeleteUser.TabIndex = 895;
+            this.btnDeleteUser.Text = "Delete";
+            this.btnDeleteUser.UseVisualStyleBackColor = true;
+            this.btnDeleteUser.Click += new System.EventHandler(this.btnDeleteUser_Click);
+            // 
             // Master
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 508);
+            this.Controls.Add(this.btnDeleteUser);
             this.Controls.Add(this.UploadToDevice);
             this.Controls.Add(this.BtnPush);
             this.Controls.Add(this.lblDeviceInfo);
@@ -418,6 +430,7 @@
         private System.Windows.Forms.Button btnUploadUserInfo;
         private System.Windows.Forms.Button BtnPush;
         private System.Windows.Forms.Button UploadToDevice;
+        private System.Windows.Forms.Button btnDeleteUser;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Windows.Forms;
 using zkemkeeper;
 
 namespace BioMetrixCore
@@ -54,6 +55,103 @@ namespace BioMetrixCore
         public bool ClearData(int dwMachineNumber, int DataFlag)
         {
             return objCZKEM.ClearData(dwMachineNumber, DataFlag);
+        }
+
+        public bool SSR_DeleteEnrollData(int dwMachineNumber, string dwEnrollNumber, int dwBackupNumber)
+        {
+            try
+            {
+                objCZKEM.EnableDevice(dwMachineNumber, false);
+
+                bool success = objCZKEM.SSR_DeleteEnrollData(dwMachineNumber, dwEnrollNumber, dwBackupNumber);
+                System.Threading.Thread.Sleep(6000);
+
+                if (!success)
+                {
+                    objCZKEM.EnableDevice(dwMachineNumber, true);
+                    objCZKEM.RefreshData(dwMachineNumber);
+
+                    
+                    bool dataExists = objCZKEM.SSR_GetUserInfo(dwMachineNumber, dwEnrollNumber, out _, out _, out _, out _);
+
+                    if (!dataExists)
+                    {
+                       // MessageBox.Show($"Enrollment data for user {dwEnrollNumber} was deleted, but the operation returned false.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return true;
+                    }
+                    else
+                    {
+                        //MessageBox.Show($"Failed to delete enrollment data for user {dwEnrollNumber}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+                }
+
+                objCZKEM.EnableDevice(dwMachineNumber, true);
+                objCZKEM.RefreshData(dwMachineNumber);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                objCZKEM.EnableDevice(dwMachineNumber, true);
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+        }
+
+        public bool SSR_DeleteEnrollDataExt(int dwMachineNumber, string dwEnrollNumber, int dwBackupNumber)
+        {
+            try
+            {
+                objCZKEM.EnableDevice(dwMachineNumber, false);
+
+                bool success = objCZKEM.SSR_DeleteEnrollDataExt(dwMachineNumber, dwEnrollNumber, dwBackupNumber);
+
+                if (!success)
+                {
+                    objCZKEM.EnableDevice(dwMachineNumber, true);
+                    MessageBox.Show($"Failed to delete extended enrollment data for user {dwEnrollNumber}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
+                objCZKEM.EnableDevice(dwMachineNumber, true);
+                objCZKEM.RefreshData(dwMachineNumber);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                objCZKEM.EnableDevice(dwMachineNumber, true);
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private bool DeleteEnrollData(int dwMachineNumber, string dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber)
+        {
+            int num = Convert.ToInt32(dwEnrollNumber);   
+            try
+            {
+                
+                objCZKEM.EnableDevice(dwMachineNumber, false);
+
+                
+                bool success = objCZKEM.DeleteEnrollData(dwMachineNumber, num, dwEMachineNumber, dwBackupNumber);
+
+                objCZKEM.EnableDevice(dwMachineNumber, true);
+
+              
+                objCZKEM.RefreshData(dwMachineNumber);
+
+                return success;
+            }
+            catch (Exception ex)
+            {
+                objCZKEM.EnableDevice(dwMachineNumber, true); 
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
 
 
@@ -397,7 +495,7 @@ namespace BioMetrixCore
 
         public bool DeleteEnrollData(int dwMachineNumber, int dwEnrollNumber, int dwEMachineNumber, int dwBackupNumber)
         {
-            throw new NotImplementedException();
+           return objCZKEM.DeleteEnrollData(dwMachineNumber, dwEnrollNumber, dwEMachineNumber, dwBackupNumber);
         }
 
         public bool DeleteSMS(int dwMachineNumber, int ID)
@@ -1271,15 +1369,7 @@ namespace BioMetrixCore
             throw new NotImplementedException();
         }
 
-        public bool SSR_DeleteEnrollData(int dwMachineNumber, string dwEnrollNumber, int dwBackupNumber)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SSR_DeleteEnrollDataExt(int dwMachineNumber, string dwEnrollNumber, int dwBackupNumber)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public bool SSR_DeleteUserSMS(int dwMachineNumber, string dwEnrollNumber, int SMSID)
         {

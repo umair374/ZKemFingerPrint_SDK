@@ -716,6 +716,59 @@ namespace BioMetrixCore
 
         }
 
-        
+        private void btnDeleteUser_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvRecords.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Please select a user from the grid view.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                DataGridViewRow selectedRow = dgvRecords.SelectedRows[0];
+
+                int machineNumber = Convert.ToInt32(selectedRow.Cells["MachineNumber"].Value);
+                string enrollNumber = selectedRow.Cells["EnrollNumber"].Value.ToString();
+                int backupNumber =12;
+                int num = Convert.ToInt32(enrollNumber);
+
+                // Call the method to delete enrollment data
+                //bool result = objZkeeper.DeleteEnrollData(machineNumber, num,1, backupNumber);
+                bool result = objZkeeper.SSR_DeleteEnrollData(machineNumber, enrollNumber, backupNumber);
+
+                if (result)
+                {
+                    MessageBox.Show("User data deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                   // MessageBox.Show("Failed to delete user data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                ShowStatusBar(string.Empty, true);
+
+           
+
+                ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
+                if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
+                {
+                    BindToGridView(lstFingerPrintTemplates);
+                    ShowStatusBar(lstFingerPrintTemplates.Count + " records found !!", true);
+                }
+
+                bool dataExists = objZkeeper.SSR_GetUserInfo(machineNumber, enrollNumber, out _, out _, out _, out _);
+
+                if (!dataExists)
+                {
+                    MessageBox.Show($"Enrollment data for user {enrollNumber} was deleted, but the operation returned false.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
