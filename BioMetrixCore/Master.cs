@@ -434,8 +434,8 @@ namespace BioMetrixCore
         {
             // This is of no use since i implemented zkemKeeper the other way
             //bool deviceEnabled = objZkeeper.EnableDevice(int.Parse(tbxMachineNumber.Text.Trim()), true);
-            //objZkeeper.ClearData(1, 5); 
-            //objZkeeper.ClearData(1, 2);
+            objZkeeper.ClearData(1, 5);
+            objZkeeper.ClearData(1, 2);
 
         }
 

@@ -268,7 +268,7 @@
             this.btnEnableDevice.Name = "btnEnableDevice";
             this.btnEnableDevice.Size = new System.Drawing.Size(65, 48);
             this.btnEnableDevice.TabIndex = 889;
-            this.btnEnableDevice.Text = "Enable Device";
+            this.btnEnableDevice.Text = "Delete All User";
             this.btnEnableDevice.UseVisualStyleBackColor = true;
             this.btnEnableDevice.Click += new System.EventHandler(this.btnEnableDevice_Click);
             // 
