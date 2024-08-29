@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-
 namespace BioMetrixCore
 {
     internal class DeviceManipulator
@@ -51,7 +50,7 @@ namespace BioMetrixCore
 
                         if (result == DialogResult.Yes)
                         {
-                            using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
+                            using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.9)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
                             {
                                 conn.Open();
 
@@ -97,7 +96,7 @@ namespace BioMetrixCore
             DialogResult result = MessageBox.Show("WANT TO COPY DATA FROM DATABASE TO DEVICE?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
+                using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.9)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
                 {
                     conn.Open();
 
@@ -178,7 +177,7 @@ namespace BioMetrixCore
         {
             List<UserInfo> lstFPTemplates = new List<UserInfo>();
 
-            using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
+            using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.9)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
             {
                 conn.Open();
 

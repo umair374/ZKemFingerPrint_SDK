@@ -14,7 +14,7 @@ namespace BioMetrixCore
         DeviceManipulator manipulator = new DeviceManipulator();
         public ZkemClient objZkeeper;
         private bool isDeviceConnected = false;
-        string oradb = "User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))";
+        string oradb = "User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.9)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))";
         public OracleConnection conn;
         
 
@@ -59,7 +59,11 @@ namespace BioMetrixCore
             tbxMachineNumber.Enabled = !value;
             tbxPort.Enabled = !value;
             tbxDeviceIP.Enabled = !value;
-            BtnPush.Enabled = value;
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
         }
 
         public Master()
@@ -182,6 +186,11 @@ namespace BioMetrixCore
         {
             try
             {
+                btnClearDatabase.Enabled = false;
+                btnDeleteUser.Enabled = false;
+                BtnPush.Enabled = false;
+                btnPushLog.Enabled = false;
+                UploadToDevice.Enabled = false;
                 ICollection<UserIDInfo> lstUserIDInfo = manipulator.GetAllUserID(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
 
                 if (lstUserIDInfo != null && lstUserIDInfo.Count > 0)
@@ -205,6 +214,11 @@ namespace BioMetrixCore
 
         private void btnBeep_Click(object sender, EventArgs e)
         {
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
             objZkeeper.Beep(100);
         }
 
@@ -212,6 +226,11 @@ namespace BioMetrixCore
         {
             try
             {
+                btnClearDatabase.Enabled = false;
+                btnDeleteUser.Enabled = true;
+                BtnPush.Enabled = true;
+                btnPushLog.Enabled = false;
+                UploadToDevice.Enabled = false;
                 ShowStatusBar(string.Empty, true);
 
                 ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
@@ -323,19 +342,24 @@ namespace BioMetrixCore
         {
             try
             {
+                btnClearDatabase.Enabled = false;
+                btnDeleteUser.Enabled = false;
+                BtnPush.Enabled = false;
+                btnPushLog.Enabled = true;
+                UploadToDevice.Enabled = false;
                 ShowStatusBar(string.Empty, true);
 
                 ICollection<MachineInfo> lstMachineInfo = manipulator.GetLogData(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
 
                 if (lstMachineInfo != null && lstMachineInfo.Count > 0)
                 {
-                    BtnPush.Enabled = true;
+                   
                     BindToGridView(lstMachineInfo);
                     ShowStatusBar(lstMachineInfo.Count + " records found !!", true);
                 }
                 else
                 {
-                    BtnPush.Enabled = false;
+                    btnPushLog.Enabled = false;
                     DisplayListOutput("No records found");
                 }
             }
@@ -385,6 +409,11 @@ namespace BioMetrixCore
 
         private void btnPowerOff_Click(object sender, EventArgs e)
         {
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
             var resultDia = DialogResult.None;
@@ -400,7 +429,11 @@ namespace BioMetrixCore
 
         private void btnRestartDevice_Click(object sender, EventArgs e)
         {
-
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
             DialogResult rslt = MessageBox.Show("Do you wish to restart the device now ??", "Restart Device", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (rslt == DialogResult.Yes)
             {
@@ -421,7 +454,11 @@ namespace BioMetrixCore
             int dwHour = 0;
             int dwMinute = 0;
             int dwSecond = 0;
-
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
             bool result = objZkeeper.GetDeviceTime(machineNumber, ref dwYear, ref dwMonth, ref dwDay, ref dwHour, ref dwMinute, ref dwSecond);
 
             string deviceTime = new DateTime(dwYear, dwMonth, dwDay, dwHour, dwMinute, dwSecond).ToString();
@@ -432,6 +469,11 @@ namespace BioMetrixCore
 
         private void btnEnableDevice_Click(object sender, EventArgs e)
         {
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
             DialogResult result = MessageBox.Show("Are you sure you want to delete all users from the device?",
                                                   "Delete Confirmation",
                                                   MessageBoxButtons.YesNo,
@@ -452,6 +494,11 @@ namespace BioMetrixCore
 
         private void btnDisableDevice_Click(object sender, EventArgs e)
         {
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
             // This is of no use since i implemented zkemKeeper the other way
             bool deviceDisabled = objZkeeper.DisableDeviceWithTimeOut(int.Parse(tbxMachineNumber.Text.Trim()), 3000);
         }
@@ -481,6 +528,11 @@ namespace BioMetrixCore
 
         private void btnUploadUserInfo_Click(object sender, EventArgs e)
         {
+            btnClearDatabase.Enabled = true;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = true;
             // Add you new UserInfo Here and  uncomment the below code
             //List<UserInfo> lstUserInfo = new List<UserInfo>();
             //manipulator.UploadFTPTemplate(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()), lstUserInfo);
@@ -586,11 +638,11 @@ namespace BioMetrixCore
                 conn.Open();
                 ShowStatusBar("Database Connected", true);
 
-                for (int i = 0; i < dgvRecords.Rows.Count - 1; i++)
+                for (int i = 0; i < dgvRecords.Rows.Count; i++)
                 {
                     if (conn.State == ConnectionState.Open)
                     {
-                        string sqlInsert = "INSERT INTO BIOMETRICUSERINFO (MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData) ";
+                        string sqlInsert = "INSERT INTO BIOMETRICUSERINFOTEMP (MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData) ";
                         sqlInsert += "VALUES (:p_MachineNumber, :p_EnrollNumber, :p_Name, :p_FingerIndex, :p_Privilege, :p_Password, :p_Enabled, :p_iFlag, :p_FINGERData)";
 
                         OracleCommand cmdInsert = new OracleCommand();
@@ -779,6 +831,116 @@ namespace BioMetrixCore
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnClearDatabase_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure you want to delete all data from the database?",
+                                          "Delete Confirmation",
+                                          MessageBoxButtons.YesNo,
+                                          MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    using (conn = new OracleConnection(oradb))
+                    {
+                        conn.Open();
+                        using (OracleCommand cmd = new OracleCommand("DELETE FROM BIOMETRICUSERINFOTEMP", conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    MessageBox.Show("All data has been deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    btnUploadUserInfo_Click(objZkeeper,e);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while deleting data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                // If the user cancels, do nothing
+                MessageBox.Show("Operation canceled.", "Canceled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnPushLog_Click(object sender, EventArgs e)
+        {
+            conn = new OracleConnection(oradb);
+            try
+            {
+                conn.Open();
+                ShowStatusBar("Database Connected", true);
+
+                for (int i = 0; i < dgvRecords.Rows.Count; i++)
+                {
+
+
+                    if (conn.State == ConnectionState.Open)
+                    {
+                        string sqlInsert = "insert into tbl_zkt_log (empid,sc_time,scc_date) ";
+                        sqlInsert += "values (LPAD(:p_empid,5,0),:p_sc_time,:p_scc_date)";
+
+                        OracleCommand cmdInsert = new OracleCommand();
+                        cmdInsert.CommandText = sqlInsert;
+                        cmdInsert.Connection = conn;
+                        OracleParameter pEmpnum = new OracleParameter();
+                        OracleParameter pSctime = new OracleParameter();
+                        OracleParameter pScdate = new OracleParameter();
+                        for (int j = 0; j < dgvRecords.Columns.Count; j++)
+                        {
+                            /*writer.Write("\t" + dgvRecords.Rows[i].Cells[j].Value.ToString() + "\t" + "|");*/
+                            switch (j)
+                            {
+                                case 1:
+
+
+                                    pEmpnum.Value = dgvRecords.Rows[i].Cells[j].Value.ToString();
+                                    pEmpnum.ParameterName = "p_empid";
+                                    break;
+                                case 2:
+                                    DateTime sct = DateTime.Parse(dgvRecords.Rows[i].Cells[j].Value.ToString());
+                                    pSctime.DbType = DbType.DateTime;
+                                    pSctime.Value = sct;
+                                    pSctime.ParameterName = "p_sc_time";
+                                    break;
+                                case 3:
+
+                                    DateTime scd = DateTime.Parse(dgvRecords.Rows[i].Cells[j].Value.ToString());
+                                    pScdate.DbType = DbType.Date;
+                                    pScdate.Value = scd;
+                                    pScdate.ParameterName = "p_scc_date";
+                                    break;
+                                default:
+                                    break;
+                            }
+
+
+                        }
+
+                        cmdInsert.Parameters.Add(pEmpnum);
+                        cmdInsert.Parameters.Add(pSctime);
+                        cmdInsert.Parameters.Add(pScdate);
+
+                        cmdInsert.ExecuteNonQuery();
+
+                        cmdInsert.Dispose();
+                    }
+                    /*writer.WriteLine("");
+                    writer.WriteLine("-----------------------------------------------------");*/
+                }
+                /*writer.Close();*/
+                btnPushLog.Enabled = false;
+                DisplayListOutput("Data Exported");
+
+            }
+            catch (Exception ex)
+            {
+                DisplayListOutput(ex.Message);
             }
         }
     }

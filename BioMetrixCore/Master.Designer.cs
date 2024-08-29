@@ -57,6 +57,8 @@
             this.BtnPush = new System.Windows.Forms.Button();
             this.UploadToDevice = new System.Windows.Forms.Button();
             this.btnDeleteUser = new System.Windows.Forms.Button();
+            this.btnClearDatabase = new System.Windows.Forms.Button();
+            this.btnPushLog = new System.Windows.Forms.Button();
             this.pnlHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.panel1.SuspendLayout();
@@ -345,11 +347,11 @@
             // 
             // BtnPush
             // 
-            this.BtnPush.Location = new System.Drawing.Point(529, 40);
+            this.BtnPush.Location = new System.Drawing.Point(446, 41);
             this.BtnPush.Name = "BtnPush";
             this.BtnPush.Size = new System.Drawing.Size(75, 23);
             this.BtnPush.TabIndex = 893;
-            this.BtnPush.Text = "PUSH";
+            this.BtnPush.Text = "PUSH USER";
             this.BtnPush.UseVisualStyleBackColor = true;
             this.BtnPush.Click += new System.EventHandler(this.BtnPush_Click_1);
             // 
@@ -373,11 +375,33 @@
             this.btnDeleteUser.UseVisualStyleBackColor = true;
             this.btnDeleteUser.Click += new System.EventHandler(this.btnDeleteUser_Click);
             // 
+            // btnClearDatabase
+            // 
+            this.btnClearDatabase.Location = new System.Drawing.Point(529, 41);
+            this.btnClearDatabase.Name = "btnClearDatabase";
+            this.btnClearDatabase.Size = new System.Drawing.Size(75, 23);
+            this.btnClearDatabase.TabIndex = 896;
+            this.btnClearDatabase.Text = "CLEAR DB";
+            this.btnClearDatabase.UseVisualStyleBackColor = true;
+            this.btnClearDatabase.Click += new System.EventHandler(this.btnClearDatabase_Click);
+            // 
+            // btnPushLog
+            // 
+            this.btnPushLog.Location = new System.Drawing.Point(358, 42);
+            this.btnPushLog.Name = "btnPushLog";
+            this.btnPushLog.Size = new System.Drawing.Size(75, 23);
+            this.btnPushLog.TabIndex = 897;
+            this.btnPushLog.Text = "PUSH LOG";
+            this.btnPushLog.UseVisualStyleBackColor = true;
+            this.btnPushLog.Click += new System.EventHandler(this.btnPushLog_Click);
+            // 
             // Master
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 508);
+            this.Controls.Add(this.btnPushLog);
+            this.Controls.Add(this.btnClearDatabase);
             this.Controls.Add(this.btnDeleteUser);
             this.Controls.Add(this.UploadToDevice);
             this.Controls.Add(this.BtnPush);
@@ -431,6 +455,8 @@
         private System.Windows.Forms.Button BtnPush;
         private System.Windows.Forms.Button UploadToDevice;
         private System.Windows.Forms.Button btnDeleteUser;
+        private System.Windows.Forms.Button btnClearDatabase;
+        private System.Windows.Forms.Button btnPushLog;
     }
 }
 
