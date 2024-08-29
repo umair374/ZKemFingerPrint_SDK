@@ -64,6 +64,7 @@ namespace BioMetrixCore
             BtnPush.Enabled = false;
             btnPushLog.Enabled = false;
             UploadToDevice.Enabled = false;
+            btnTogglePrivilege.Enabled = false;
         }
 
         public Master()
@@ -186,6 +187,8 @@ namespace BioMetrixCore
         {
             try
             {
+
+                btnTogglePrivilege.Enabled = false;
                 btnClearDatabase.Enabled = false;
                 btnDeleteUser.Enabled = false;
                 BtnPush.Enabled = false;
@@ -214,6 +217,8 @@ namespace BioMetrixCore
 
         private void btnBeep_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             btnClearDatabase.Enabled = false;
             btnDeleteUser.Enabled = false;
             BtnPush.Enabled = false;
@@ -227,10 +232,11 @@ namespace BioMetrixCore
             try
             {
                 btnClearDatabase.Enabled = false;
-                btnDeleteUser.Enabled = true;
-                BtnPush.Enabled = true;
                 btnPushLog.Enabled = false;
                 UploadToDevice.Enabled = false;
+                btnTogglePrivilege.Enabled = true;
+                btnDeleteUser.Enabled = true;
+                BtnPush.Enabled = true;
                 ShowStatusBar(string.Empty, true);
 
                 ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
@@ -342,6 +348,8 @@ namespace BioMetrixCore
         {
             try
             {
+
+                btnTogglePrivilege.Enabled = false;
                 btnClearDatabase.Enabled = false;
                 btnDeleteUser.Enabled = false;
                 BtnPush.Enabled = false;
@@ -409,6 +417,8 @@ namespace BioMetrixCore
 
         private void btnPowerOff_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             btnClearDatabase.Enabled = false;
             btnDeleteUser.Enabled = false;
             BtnPush.Enabled = false;
@@ -429,6 +439,8 @@ namespace BioMetrixCore
 
         private void btnRestartDevice_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             btnClearDatabase.Enabled = false;
             btnDeleteUser.Enabled = false;
             BtnPush.Enabled = false;
@@ -447,6 +459,8 @@ namespace BioMetrixCore
 
         private void btnGetDeviceTime_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             int machineNumber = int.Parse(tbxMachineNumber.Text.Trim());
             int dwYear = 0;
             int dwMonth = 0;
@@ -469,6 +483,8 @@ namespace BioMetrixCore
 
         private void btnEnableDevice_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             btnClearDatabase.Enabled = false;
             btnDeleteUser.Enabled = false;
             BtnPush.Enabled = false;
@@ -494,6 +510,8 @@ namespace BioMetrixCore
 
         private void btnDisableDevice_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             btnClearDatabase.Enabled = false;
             btnDeleteUser.Enabled = false;
             BtnPush.Enabled = false;
@@ -528,6 +546,8 @@ namespace BioMetrixCore
 
         private void btnUploadUserInfo_Click(object sender, EventArgs e)
         {
+
+            btnTogglePrivilege.Enabled = false;
             btnClearDatabase.Enabled = true;
             btnDeleteUser.Enabled = false;
             BtnPush.Enabled = false;
@@ -943,5 +963,56 @@ namespace BioMetrixCore
                 DisplayListOutput(ex.Message);
             }
         }
+
+        private void btnTogglePrivilege_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvRecords.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Please select a user from the grid view.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                DataGridViewRow selectedRow = dgvRecords.SelectedRows[0];
+
+                int machineNumber = Convert.ToInt32(selectedRow.Cells["MachineNumber"].Value);
+                string enrollNumber = selectedRow.Cells["EnrollNumber"].Value.ToString();
+
+                bool userExists = objZkeeper.SSR_GetUserInfo(machineNumber, enrollNumber, out string name, out string password, out int privilege, out bool enabled);
+
+                if (userExists)
+                {
+                    int newPrivilege = (privilege == 0) ? 3 : 0;
+
+                    bool updateResult = objZkeeper.SSR_SetUserInfo(machineNumber, enrollNumber, name, password, newPrivilege, enabled);
+
+                    if (updateResult)
+                    {
+                        MessageBox.Show("User privilege updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ICollection<UserInfo> lstFingerPrintTemplates = manipulator.GetAllUserInfo(objZkeeper, int.Parse(tbxMachineNumber.Text.Trim()));
+                        if (lstFingerPrintTemplates != null && lstFingerPrintTemplates.Count > 0)
+                        {
+                            BindToGridView(lstFingerPrintTemplates);
+                            ShowStatusBar(lstFingerPrintTemplates.Count + " records found !!", true);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to update user privilege.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("User not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

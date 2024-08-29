@@ -59,6 +59,7 @@
             this.btnDeleteUser = new System.Windows.Forms.Button();
             this.btnClearDatabase = new System.Windows.Forms.Button();
             this.btnPushLog = new System.Windows.Forms.Button();
+            this.btnTogglePrivilege = new System.Windows.Forms.Button();
             this.pnlHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.panel1.SuspendLayout();
@@ -72,7 +73,8 @@
             this.tbxDeviceIP.Name = "tbxDeviceIP";
             this.tbxDeviceIP.Size = new System.Drawing.Size(99, 22);
             this.tbxDeviceIP.TabIndex = 0;
-            this.tbxDeviceIP.Text = "172.18.12.222";
+            this.tbxDeviceIP.Text = "192.168.1.201";
+           // this.tbxDeviceIP.TextChanged += new System.EventHandler(this.tbxDeviceIP_TextChanged);
             // 
             // label1
             // 
@@ -395,11 +397,22 @@
             this.btnPushLog.UseVisualStyleBackColor = true;
             this.btnPushLog.Click += new System.EventHandler(this.btnPushLog_Click);
             // 
+            // btnTogglePrivilege
+            // 
+            this.btnTogglePrivilege.Location = new System.Drawing.Point(232, 42);
+            this.btnTogglePrivilege.Name = "btnTogglePrivilege";
+            this.btnTogglePrivilege.Size = new System.Drawing.Size(115, 23);
+            this.btnTogglePrivilege.TabIndex = 898;
+            this.btnTogglePrivilege.Text = "CHANGE PRIVILEGE";
+            this.btnTogglePrivilege.UseVisualStyleBackColor = true;
+            this.btnTogglePrivilege.Click += new System.EventHandler(this.btnTogglePrivilege_Click);
+            // 
             // Master
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 508);
+            this.Controls.Add(this.btnTogglePrivilege);
             this.Controls.Add(this.btnPushLog);
             this.Controls.Add(this.btnClearDatabase);
             this.Controls.Add(this.btnDeleteUser);
@@ -457,6 +470,7 @@
         private System.Windows.Forms.Button btnDeleteUser;
         private System.Windows.Forms.Button btnClearDatabase;
         private System.Windows.Forms.Button btnPushLog;
+        private System.Windows.Forms.Button btnTogglePrivilege;
     }
 }
 
