@@ -429,15 +429,26 @@ namespace BioMetrixCore
             lstDeviceInfo.Add(new DeviceTimeInfo() { DeviceTime = deviceTime });
             BindToGridView(lstDeviceInfo);
         }
-        
+
         private void btnEnableDevice_Click(object sender, EventArgs e)
         {
-            // This is of no use since i implemented zkemKeeper the other way
-            //bool deviceEnabled = objZkeeper.EnableDevice(int.Parse(tbxMachineNumber.Text.Trim()), true);
-            objZkeeper.ClearData(1, 5);
-            objZkeeper.ClearData(1, 2);
+            DialogResult result = MessageBox.Show("Are you sure you want to delete all users from the device?",
+                                                  "Delete Confirmation",
+                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxIcon.Warning);
 
+            if (result == DialogResult.Yes)
+            {
+                objZkeeper.ClearData(1, 5); // 5 for deleting fingerprint templates
+                objZkeeper.ClearData(1, 2); // 2 for deleting user data
+                MessageBox.Show("All users have been deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Operation canceled.", "Canceled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
+
 
         private void btnDisableDevice_Click(object sender, EventArgs e)
         {
