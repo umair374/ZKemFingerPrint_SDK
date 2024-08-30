@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Oracle.ManagedDataAccess.Client;
 using System.Runtime.InteropServices.ComTypes;
 using System.Data;
+using System.Threading.Tasks;
 
 
 namespace BioMetrixCore
@@ -759,9 +760,61 @@ namespace BioMetrixCore
         }
 
 
-        private void UploadToDevice_Click(object sender, EventArgs e)
+        //private void UploadToDevice_Click(object sender, EventArgs e)
+        //{
+        //   // var lstFingerPrintTemplates = manipulator.GetFingerPrintTemplatesFromGrid();
+        //    List<UserInfo> lstFingerPrintTemplates = new List<UserInfo>();
+
+        //    foreach (DataGridViewRow row in dgvRecords.Rows)
+        //    {
+        //        if (row.Cells["EnrollNumber"].Value != null)
+        //        {
+        //            UserInfo userInfo = new UserInfo();
+        //            userInfo.EnrollNumber = row.Cells["EnrollNumber"].Value.ToString();
+        //            userInfo.Name = row.Cells["Name"].Value?.ToString();
+        //            userInfo.FingerIndex = Convert.ToInt32(row.Cells["FingerIndex"].Value);
+        //            userInfo.Privelage = Convert.ToInt32(row.Cells["Privelage"].Value);
+        //            userInfo.Password = row.Cells["Password"].Value?.ToString();
+        //            userInfo.Enabled = Convert.ToBoolean(row.Cells["Enabled"].Value);
+        //            userInfo.iFlag = row.Cells["iFlag"].Value?.ToString();
+        //            userInfo.TmpData = row.Cells["TmpData"].Value?.ToString();
+
+        //            lstFingerPrintTemplates.Add(userInfo);
+        //        }
+        //    }
+
+
+        //    if (lstFingerPrintTemplates == null || lstFingerPrintTemplates.Count == 0)
+        //    {
+        //        MessageBox.Show("No data available for upload. Please fetch data first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    DialogResult result = MessageBox.Show("Do you want to upload the data from the grid to the device?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        //    if (result == DialogResult.Yes)
+        //    {
+        //        ShowStatusBar("DATA IS UPLOADING, IT TAKES AROUND ABOUT 5-10 mins !!", true);
+        //        ICollection<UserInfo> lstFingerPrintTemplates_ = manipulator.UploadFTPTemplate_return(objZkeeper, 1, lstFingerPrintTemplates);
+
+
+        //        if (lstFingerPrintTemplates_ == null)
+        //        {
+        //            ShowStatusBar("Failed !!", true);
+        //            MessageBox.Show("Failed to upload the data to the device.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //        else
+        //        {
+        //            BindToGridView(lstFingerPrintTemplates_);
+        //            ShowStatusBar(lstFingerPrintTemplates_.Count + " records found !!", true);
+        //            MessageBox.Show("Data uploaded successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //        }
+        //    }
+
+        //}
+
+        private async void UploadToDevice_Click(object sender, EventArgs e)
         {
-           // var lstFingerPrintTemplates = manipulator.GetFingerPrintTemplatesFromGrid();
+            // var lstFingerPrintTemplates = manipulator.GetFingerPrintTemplatesFromGrid();
             List<UserInfo> lstFingerPrintTemplates = new List<UserInfo>();
 
             foreach (DataGridViewRow row in dgvRecords.Rows)
@@ -782,7 +835,6 @@ namespace BioMetrixCore
                 }
             }
 
-
             if (lstFingerPrintTemplates == null || lstFingerPrintTemplates.Count == 0)
             {
                 MessageBox.Show("No data available for upload. Please fetch data first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -792,11 +844,20 @@ namespace BioMetrixCore
             DialogResult result = MessageBox.Show("Do you want to upload the data from the grid to the device?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                ICollection<UserInfo> lstFingerPrintTemplates_ = manipulator.UploadFTPTemplate_return(objZkeeper, 1, lstFingerPrintTemplates);
+                ShowStatusBar("DATA IS UPLOADING, IT TAKES AROUND ABOUT 5-10 mins !!", true);
 
+                // Run the upload process on a background thread
+                var uploadTask = Task.Run(() =>
+                {
+                    return manipulator.UploadFTPTemplate_return(objZkeeper, 1, lstFingerPrintTemplates);
+                });
+
+                // Await the task to allow UI to remain responsive
+                var lstFingerPrintTemplates_ = await uploadTask;
 
                 if (lstFingerPrintTemplates_ == null)
                 {
+                    ShowStatusBar("Failed !!", true);
                     MessageBox.Show("Failed to upload the data to the device.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
@@ -806,7 +867,6 @@ namespace BioMetrixCore
                     MessageBox.Show("Data uploaded successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-
         }
 
         private void btnDeleteUser_Click(object sender, EventArgs e)
@@ -908,27 +968,25 @@ namespace BioMetrixCore
 
                 for (int i = 0; i < dgvRecords.Rows.Count; i++)
                 {
-
-
                     if (conn.State == ConnectionState.Open)
                     {
-                        string sqlInsert = "insert into tbl_zkt_log (empid,sc_time,scc_date) ";
-                        sqlInsert += "values (LPAD(:p_empid,5,0),:p_sc_time,:p_scc_date)";
+                        string sqlInsert = "INSERT INTO tbl_zkt_log (empid, sc_time, scc_date, IP_ADDRESS) ";
+                        sqlInsert += "VALUES (LPAD(:p_empid, 5, 0), :p_sc_time, :p_scc_date, :p_ip_address)";
 
                         OracleCommand cmdInsert = new OracleCommand();
                         cmdInsert.CommandText = sqlInsert;
                         cmdInsert.Connection = conn;
+
                         OracleParameter pEmpnum = new OracleParameter();
                         OracleParameter pSctime = new OracleParameter();
                         OracleParameter pScdate = new OracleParameter();
+                        OracleParameter pIPAddress = new OracleParameter();
+
                         for (int j = 0; j < dgvRecords.Columns.Count; j++)
                         {
-                            /*writer.Write("\t" + dgvRecords.Rows[i].Cells[j].Value.ToString() + "\t" + "|");*/
                             switch (j)
                             {
                                 case 1:
-
-
                                     pEmpnum.Value = dgvRecords.Rows[i].Cells[j].Value.ToString();
                                     pEmpnum.ParameterName = "p_empid";
                                     break;
@@ -939,7 +997,6 @@ namespace BioMetrixCore
                                     pSctime.ParameterName = "p_sc_time";
                                     break;
                                 case 3:
-
                                     DateTime scd = DateTime.Parse(dgvRecords.Rows[i].Cells[j].Value.ToString());
                                     pScdate.DbType = DbType.Date;
                                     pScdate.Value = scd;
@@ -948,31 +1005,33 @@ namespace BioMetrixCore
                                 default:
                                     break;
                             }
-
-
                         }
 
+                        // Assign the IP address to the parameter
+                        pIPAddress.Value = tbxDeviceIP.Text;
+                        pIPAddress.ParameterName = "p_ip_address";
+
+                        // Add parameters to the command
                         cmdInsert.Parameters.Add(pEmpnum);
                         cmdInsert.Parameters.Add(pSctime);
                         cmdInsert.Parameters.Add(pScdate);
+                        cmdInsert.Parameters.Add(pIPAddress);
 
+                        // Execute the command
                         cmdInsert.ExecuteNonQuery();
-
                         cmdInsert.Dispose();
                     }
-                    /*writer.WriteLine("");
-                    writer.WriteLine("-----------------------------------------------------");*/
                 }
-                /*writer.Close();*/
+
                 btnPushLog.Enabled = false;
                 DisplayListOutput("Data Exported");
-
             }
             catch (Exception ex)
             {
                 DisplayListOutput(ex.Message);
             }
         }
+
 
         private void btnTogglePrivilege_Click(object sender, EventArgs e)
         {
