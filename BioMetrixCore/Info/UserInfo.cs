@@ -12,6 +12,7 @@
         public string Password { get; set; }
         public bool Enabled { get; set; }
         public string iFlag { get; set; }
+        public string DeviceIP { get; set; } = string.Empty;
 
     }
 }

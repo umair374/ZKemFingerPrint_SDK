@@ -173,6 +173,44 @@ namespace BioMetrixCore
         }
 
 
+        //public ICollection<UserInfo> GetAllUserInfoFromDatabase(int machineNumber)
+        //{
+        //    List<UserInfo> lstFPTemplates = new List<UserInfo>();
+
+        //    using (OracleConnection conn = new OracleConnection("User Id=hr;Password=123456;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.9)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)))"))
+        //    {
+        //        conn.Open();
+
+        //        using (OracleCommand cmd = new OracleCommand())
+        //        {
+        //            cmd.Connection = conn;
+        //            cmd.CommandText = "SELECT MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData FROM BIOMETRICUSERINFOTEMP WHERE MachineNumber = :MachineNumber";
+        //            cmd.Parameters.Add(new OracleParameter("MachineNumber", machineNumber));
+
+        //            using (OracleDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    UserInfo fpInfo = new UserInfo();
+        //                    fpInfo.MachineNumber = reader.GetInt32(0);
+        //                    fpInfo.EnrollNumber = reader.GetString(1);
+        //                    fpInfo.Name = reader.IsDBNull(2) ? " " : reader.GetString(2);
+        //                    fpInfo.FingerIndex = reader.GetInt32(3);
+        //                    fpInfo.Privelage = reader.GetInt32(4);
+        //                    fpInfo.Password = reader.IsDBNull(5) ? " " : reader.GetString(5);
+        //                    fpInfo.Enabled = reader.GetString(6) == "Y";
+        //                    fpInfo.iFlag = reader.GetInt32(7).ToString();
+        //                    fpInfo.TmpData = reader.IsDBNull(8) ? " " : reader.GetString(8);
+
+        //                    lstFPTemplates.Add(fpInfo);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return lstFPTemplates;
+        //}
+
         public ICollection<UserInfo> GetAllUserInfoFromDatabase(int machineNumber)
         {
             List<UserInfo> lstFPTemplates = new List<UserInfo>();
@@ -184,7 +222,7 @@ namespace BioMetrixCore
                 using (OracleCommand cmd = new OracleCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData FROM BIOMETRICUSERINFOTEMP WHERE MachineNumber = :MachineNumber";
+                    cmd.CommandText = "SELECT MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData, DeviceIP FROM BIOMETRICUSERINFOTEMP WHERE MachineNumber = :MachineNumber";
                     cmd.Parameters.Add(new OracleParameter("MachineNumber", machineNumber));
 
                     using (OracleDataReader reader = cmd.ExecuteReader())
@@ -201,6 +239,7 @@ namespace BioMetrixCore
                             fpInfo.Enabled = reader.GetString(6) == "Y";
                             fpInfo.iFlag = reader.GetInt32(7).ToString();
                             fpInfo.TmpData = reader.IsDBNull(8) ? " " : reader.GetString(8);
+                            fpInfo.DeviceIP = reader.IsDBNull(9) ? " " : reader.GetString(9); // Fetching DeviceIP
 
                             lstFPTemplates.Add(fpInfo);
                         }

@@ -47,6 +47,7 @@ namespace BioMetrixCore
         private void ToggleControls(bool value)
         {
             btnBeep.Enabled = value;
+            btnClearLogs.Enabled = value;
             btnDownloadFingerPrint.Enabled = value;
             btnPullData.Enabled = value;
             btnPowerOff.Enabled = value;
@@ -500,6 +501,7 @@ namespace BioMetrixCore
                 objZkeeper.ClearData(1, 5); // 5 for deleting fingerprint templates
                 objZkeeper.ClearData(1, 2); // 2 for deleting user data
                 MessageBox.Show("All users have been deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ClearGrid();
             }
             else
             {
@@ -658,12 +660,14 @@ namespace BioMetrixCore
                 conn.Open();
                 ShowStatusBar("Database Connected", true);
 
+                string deviceIP = tbxDeviceIP.Text; 
+
                 for (int i = 0; i < dgvRecords.Rows.Count; i++)
                 {
                     if (conn.State == ConnectionState.Open)
                     {
-                        string sqlInsert = "INSERT INTO BIOMETRICUSERINFOTEMP (MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData) ";
-                        sqlInsert += "VALUES (:p_MachineNumber, :p_EnrollNumber, :p_Name, :p_FingerIndex, :p_Privilege, :p_Password, :p_Enabled, :p_iFlag, :p_FINGERData)";
+                        string sqlInsert = "INSERT INTO BIOMETRICUSERINFOTEMP (MachineNumber, EnrollNumber, Name, FingerIndex, Privilege, Password, Enabled, iFlag, FINGERData, DeviceIP) ";
+                        sqlInsert += "VALUES (:p_MachineNumber, :p_EnrollNumber, :p_Name, :p_FingerIndex, :p_Privilege, :p_Password, :p_Enabled, :p_iFlag, :p_FINGERData, :p_DeviceIP)";
 
                         OracleCommand cmdInsert = new OracleCommand();
                         cmdInsert.CommandText = sqlInsert;
@@ -678,52 +682,56 @@ namespace BioMetrixCore
                         OracleParameter pEnabled = new OracleParameter();
                         OracleParameter piFlag = new OracleParameter();
                         OracleParameter pFINGERData = new OracleParameter();
+                        OracleParameter pDeviceIP = new OracleParameter();
 
                         for (int j = 0; j < dgvRecords.Columns.Count; j++)
                         {
                             switch (j)
                             {
-                                case 0: // Assuming MachineNumber is in the first column
+                                case 0: 
                                     pMachineNumber.Value = Convert.ToInt32(dgvRecords.Rows[i].Cells[j].Value);
                                     pMachineNumber.ParameterName = "p_MachineNumber";
                                     break;
-                                case 1: // Assuming EnrollNumber is in the second column
+                                case 1: 
                                     pEnrollNumber.Value = dgvRecords.Rows[i].Cells[j].Value.ToString();
                                     pEnrollNumber.ParameterName = "p_EnrollNumber";
                                     break;
-                                case 2: // Assuming Name is in the third column
+                                case 2: 
                                     pName.Value = dgvRecords.Rows[i].Cells[j].Value?.ToString() ?? string.Empty;
                                     pName.ParameterName = "p_Name";
                                     break;
-                                case 3: // Assuming FingerIndex is in the fourth column
+                                case 3: 
                                     pFingerIndex.Value = Convert.ToInt32(dgvRecords.Rows[i].Cells[j].Value);
                                     pFingerIndex.ParameterName = "p_FingerIndex";
                                     break;
-                                case 4: // Assuming FINGERData is in the ninth column
+                                case 4: 
                                     pFINGERData.Value = dgvRecords.Rows[i].Cells[j].Value?.ToString() ?? string.Empty;
                                     pFINGERData.ParameterName = "p_FINGERData";
                                     break;
-                                case 5: // Assuming Privilege is in the fifth column
+                                case 5: 
                                     pPrivilege.Value = Convert.ToInt32(dgvRecords.Rows[i].Cells[j].Value);
                                     pPrivilege.ParameterName = "p_Privilege";
                                     break;
-                                case 6: // Assuming Password is in the sixth column
+                                case 6: 
                                     pPassword.Value = dgvRecords.Rows[i].Cells[j].Value?.ToString() ?? string.Empty;
                                     pPassword.ParameterName = "p_Password";
                                     break;
-                                case 7: // Assuming Enabled is in the seventh column
+                                case 7: 
                                     pEnabled.Value = (bool)dgvRecords.Rows[i].Cells[j].Value ? 'Y' : 'N';
                                     pEnabled.ParameterName = "p_Enabled";
                                     break;
-                                case 8: // Assuming iFlag is in the eighth column
+                                case 8: 
                                     piFlag.Value = dgvRecords.Rows[i].Cells[j].Value?.ToString() ?? string.Empty;
                                     piFlag.ParameterName = "p_iFlag";
                                     break;
-                                
                                 default:
                                     break;
                             }
                         }
+
+                        // Set the DeviceIP parameter
+                        pDeviceIP.Value = deviceIP;
+                        pDeviceIP.ParameterName = "p_DeviceIP";
 
                         cmdInsert.Parameters.Add(pMachineNumber);
                         cmdInsert.Parameters.Add(pEnrollNumber);
@@ -734,6 +742,7 @@ namespace BioMetrixCore
                         cmdInsert.Parameters.Add(pEnabled);
                         cmdInsert.Parameters.Add(piFlag);
                         cmdInsert.Parameters.Add(pFINGERData);
+                        cmdInsert.Parameters.Add(pDeviceIP);
 
                         cmdInsert.ExecuteNonQuery();
                         cmdInsert.Dispose();
@@ -748,6 +757,7 @@ namespace BioMetrixCore
                 DisplayListOutput(ex.Message);
             }
         }
+
 
         private void UploadToDevice_Click(object sender, EventArgs e)
         {
@@ -1014,5 +1024,43 @@ namespace BioMetrixCore
             }
         }
 
+        private void btnClearLogs_Click(object sender, EventArgs e)
+        {
+            btnTogglePrivilege.Enabled = false;
+            btnClearDatabase.Enabled = false;
+            btnDeleteUser.Enabled = false;
+            BtnPush.Enabled = false;
+            btnPushLog.Enabled = false;
+            UploadToDevice.Enabled = false;
+
+            DialogResult result = MessageBox.Show("Are you sure you want to delete all log data from the device?",
+                                                  "Delete Logs Confirmation",
+                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                int machineNumber = 1;
+                bool logCleared = objZkeeper.ClearGLog(machineNumber);
+
+                if (logCleared)
+                {
+                    MessageBox.Show("All log data has been deleted successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearGrid();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to clear log data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Operation canceled.", "Canceled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+
+        }
+
+       
     }
 }
